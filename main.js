@@ -23,29 +23,49 @@ function GetRandomInt(maxValue) {
     return Math.floor(Math.random() * maxValue);
 }
 
-function GenerateRandomCompany() {
-
-    for(let value in CompanyLookup) {
-        Table.innerHTML += GetTableEntry(value, GetRandomRange(0, 750), CompanyLookup[value]);
-    }
-
-}
-
 function BuyStock(htmlItem) {
     let data = GetDataFromEntry(htmlItem);
+
+    if(data.price > GetBalance()) {
+        alert("Insufficient Funds");
+        return;
+    }
+
+    if(!confirm(`Are you sure you want to buy a stock in ${data.name}?`))
+        return;
+
+    CompanyLookup[data.name]++;
+    SetBalance(GetBalance() - data.price);
+
+    GenerateTable();
 }
 
 function SellStock(htmlItem) {
+    let data = GetDataFromEntry(htmlItem);
 
+    if(CompanyLookup[data.name] <= 0) {
+        alert("You do not have any stocks!");
+        return;
+    }
+
+    if(!confirm(`Are you sure you want to sell a stock in ${data.name}`))
+        return;
+    
+    CompanyLookup[data.name]--;
+    SetBalance(GetBalance() + data.price);
+
+    GenerateTable();
 }
 
 function GetDataFromEntry(entry) {
     let data = entry.parentElement.parentElement;
-    let children = data.children;
+    let childElements = data.children;
 
-    // for(let child : children) {
+    let name = childElements[0].innerHTML;
+    let price = Number.parseInt(childElements[1].innerHTML);
+    let stocksOwned = Number.parseInt(childElements[2].innerHTML);
 
-    // }
+    return { name, price, stocksOwned };
 }
 
 function GetTableEntry(name, price, stocksOwned) {
@@ -63,10 +83,29 @@ function GetTableEntry(name, price, stocksOwned) {
 }
 
 function GenerateTable() {
-    GenerateRandomCompany();
+    Table.innerHTML = `
+    <tr id="main-header">
+        <th>Company Name</th>
+        <th>Current Selling Price</th>
+        <th>Stocks Owned</th>
+        <th>Controls</th>
+    </tr>
+    `;
+
+    for(let value in CompanyLookup) {
+        Table.innerHTML += GetTableEntry(value, GetRandomRange(0, 750), CompanyLookup[value]);
+    }
+}
+
+function BindButtonCallbacks() {
+    document.getElementById("increment").onclick = function() {
+        IncrementDayCount();
+        GenerateTable();
+    }
 }
 
 window.onload = function() {
+    BindButtonCallbacks();
     SetBalance(1000); // Starting Balance
     GenerateTable();
 }
