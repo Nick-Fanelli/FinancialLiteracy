@@ -9,8 +9,6 @@ var CompanyLookup = {
     "Apple": 0
 };
 
-function TimeUpdate() {}
-
 function GetDayCount() { return Number.parseInt(document.getElementById("day-count").innerHTML); }
 function GetBalance() { return Number.parseInt(document.getElementById("balance").innerHTML); }
 
@@ -95,7 +93,7 @@ function GenerateTable() {
     }
 }
 
-function RegenerateTable(shouldUpdate) {
+function RegenerateTable(shouldUpdate, high = 1, low = -0.5) {
 
     var values = [];
 
@@ -120,7 +118,7 @@ function RegenerateTable(shouldUpdate) {
 
         if(shouldUpdate) {
             // Generate Percent Change
-            let percentChange = GetRandomRange(-1, 2);
+            let percentChange = GetRandomRange(low, high);
             newValue += newValue * (percentChange / 100);
             newValue = Math.round(100 * newValue) / 100; // Round to nearest cent
         }
@@ -142,10 +140,6 @@ function BindButtonCallbacks() {
     }
 }
 
-function loop() {
-    console.log("Update");
-}
-
 function HandleUpdateLoop() {
     const updateLoop = setInterval((interval) => {
         if(!IsAutomaticEnabled()) {
@@ -153,8 +147,9 @@ function HandleUpdateLoop() {
             return;
         }
 
-        RegenerateTable(true);
-    }, 2500);
+        RegenerateTable(true, -1.5, 3);
+        // IncrementDayCount();
+    }, 2500); // 2.5 seconds
 
 }
 
