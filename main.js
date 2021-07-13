@@ -120,7 +120,7 @@ function RegenerateTable(shouldUpdate) {
 
         if(shouldUpdate) {
             // Generate Percent Change
-            let percentChange = GetRandomRange(-5, 8);
+            let percentChange = GetRandomRange(-1, 2);
             newValue += newValue * (percentChange / 100);
             newValue = Math.round(100 * newValue) / 100; // Round to nearest cent
         }
