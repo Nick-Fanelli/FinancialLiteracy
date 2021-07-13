@@ -207,11 +207,29 @@ function HandleUpdateLoop() {
 
 }
 
+function DisplayWelcomeMessage() {
+    window.alert(
+        "Hello and welcome to the Financial Literacy Stocks Trading Demo!\n\n" +
+        "Your goal is to spend your original starting value of $1,000 in order to buy stocks and make more money in the long run.\n\n" +
+        "How many days will it take you to become a millionaire?"
+    );
+}
+
+function CatchUnload() {
+    window.onbeforeunload = function() {
+        return "Are you sure you want to reload?? You will loose all your progress!!";
+    }
+}
+
 window.onload = function() {
+    DisplayWelcomeMessage();
+
     BindButtonCallbacks();
     SetBalance(1000); // Starting Balance
     GenerateTable();
 
     // Start Update Loop
     HandleUpdateLoop();
+
+    CatchUnload();
 }

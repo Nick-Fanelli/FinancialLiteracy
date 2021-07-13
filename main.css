@@ -104,3 +104,10 @@ tr:nth-child(even) {
 #increment:hover { background-color: #34a4eb; }
 #increment-month:hover { background-color: #00cf6b; }
 #automatic:hover, #automatic.enabled { background-color: tomato; }
+
+#name {
+    position: absolute;
+    bottom: 0;
+    right: 1em;
+    opacity: 30%;
+}
