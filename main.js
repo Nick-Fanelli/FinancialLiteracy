@@ -1,12 +1,18 @@
 const Table = document.querySelector("table");
 
+// Encourage Forward Growth
+const ChangeHigh = 0.025;
+const ChangeLow = -0.0005;
+
 var CompanyLookup = {
     "Microsoft": 0,
     "Amazon": 0,
     "Qualcomm": 0,
     "Walmart": 0,
     "Target": 0,
-    "Apple": 0
+    "Apple": 0,
+    "Nvidia": 0,
+    "AMD": 0
 };
 
 function GetDayCount() { return Number.parseInt(document.getElementById("day-count").innerHTML); }
@@ -14,7 +20,7 @@ function GetBalance() { return Number.parseInt(document.getElementById("balance"
 
 function IsAutomaticEnabled() { return document.getElementById("automatic").classList.contains("enabled"); }
 
-function IncrementDayCount() { document.getElementById("day-count").innerHTML = GetDayCount() + 1; }
+function IncrementDayCount(count = 1) { document.getElementById("day-count").innerHTML = GetDayCount() + count; }
 function SetBalance(value) { document.getElementById("balance").innerHTML = value; UpdateNetWorth(); }
 
 function UpdateNetWorth() {
@@ -32,10 +38,6 @@ function UpdateNetWorth() {
 
 function GetRandomRange(min, max) {
     return (Math.random() * (max - min) + min).toFixed(2);
-}
-
-function GetRandomInt(maxValue) {
-    return Math.floor(Math.random() * maxValue);
 }
 
 function BuyStock(htmlItem) {
@@ -96,17 +98,31 @@ function GenerateTable() {
     <tr id="main-header">
         <th>Company Name</th>
         <th>Current Selling Price</th>
-        <th>Stocks Owned</th>
+        <th>Stocks Owned (1% of Equity)</th>
         <th>Controls</th>
     </tr>
     `;
 
     for(let value in CompanyLookup) {
-        Table.innerHTML += GetTableEntry(value, GetRandomRange(0, 750), CompanyLookup[value]);
+        Table.innerHTML += GetTableEntry(value, GetRandomRange(0, 100), CompanyLookup[value]);
     }
 }
 
-function RegenerateTable(shouldUpdate, high = 1, low = -0.5) {
+function NumberToMoney(value) {
+    let parts = value.toString().split(".");
+
+    if(parts.length < 2)
+        return parts + ".00";
+
+    if(parts[1].length == 0)
+        parts[1] += "00"
+    else if(parts[1].length == 1)
+        parts[1] += "0"
+
+    return parts.join(".");
+}
+
+function RegenerateTable(shouldUpdate, low = ChangeLow, high = ChangeHigh) {
 
     var values = [];
 
@@ -119,7 +135,7 @@ function RegenerateTable(shouldUpdate, high = 1, low = -0.5) {
     <tr id="main-header">
         <th>Company Name</th>
         <th>Current Selling Price</th>
-        <th>Stocks Owned</th>
+        <th>Stocks Owned (1% of Equity)</th>
         <th>Controls</th>
     </tr>
     `;
@@ -136,7 +152,7 @@ function RegenerateTable(shouldUpdate, high = 1, low = -0.5) {
             newValue = Math.round(100 * newValue) / 100; // Round to nearest cent
         }
 
-        Table.innerHTML += GetTableEntry(value, newValue, CompanyLookup[value]);
+        Table.innerHTML += GetTableEntry(value, NumberToMoney(newValue), CompanyLookup[value]);
         i++;
     }
 
@@ -146,7 +162,14 @@ function RegenerateTable(shouldUpdate, high = 1, low = -0.5) {
 function BindButtonCallbacks() {
     document.getElementById("increment").onclick = function() {
         IncrementDayCount();
-        RegenerateTable(true);
+
+        RegenerateTable(true, ChangeLow, ChangeHigh * 30);
+    }
+
+    document.getElementById("increment-month").onclick = function() {
+        IncrementDayCount(30);
+
+        RegenerateTable(true, ChangeLow, ChangeHigh * 900); // 30 per day * 30 days = 900
     }
 
     document.getElementById("automatic").onclick = function() {
@@ -155,16 +178,32 @@ function BindButtonCallbacks() {
     }
 }
 
+var running = false;
+
 function HandleUpdateLoop() {
+    if(running)
+        return;
+
+    var tickCount = 0;
+
     const updateLoop = setInterval((interval) => {
         if(!IsAutomaticEnabled()) {
+            running = false;
             clearInterval(updateLoop);
+            tickCount = 0;
             return;
         }
 
-        RegenerateTable(true, -1.5, 3);
-        // IncrementDayCount();
-    }, 2500); // 2.5 seconds
+        running = true;
+        
+        RegenerateTable(true);
+        tickCount++;
+
+        if(tickCount >= 30) { // Based on 30 days per month (Every thirty automatic ticks equals one day)
+            IncrementDayCount();
+            tickCount = 0;
+        }
+    }, 2250); // 2.25 seconds
 
 }
 
