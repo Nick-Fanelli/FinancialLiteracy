@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+
+* {
+    font-family: "Open Sans";
+}
+
 table {
     font-family: arial, sans-serif;
     border-collapse: collapse;
@@ -16,4 +22,39 @@ tr:nth-child(even) {
 
 #main-header th {
     text-align: center;
+}
+
+.buy-stock {
+    background-color: transparent;
+    border: solid 3px lightseagreen;
+    border-radius: 5px;    
+    cursor: pointer;
+
+    transition-duration: 0.2s;
+}
+
+.buy-stock:hover {
+    background-color: lightseagreen;
+}
+
+.sell-stock {
+    background-color: transparent;
+    border: solid 3px tomato;
+    border-radius: 5px;
+    cursor: pointer;
+
+    transition-duration: 0.2s;
+}
+
+.sell-stock:hover {
+    background-color: tomato;
+}
+
+.wrapper {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.wrapper .section {
+    width: 50vw;
 }
