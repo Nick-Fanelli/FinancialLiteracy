@@ -1,9 +1,9 @@
 const Table = document.querySelector("table");
 
 var CompanyLookup = {
-    "Some Company": 0,
-    "Random Cop.": 0,
-    "Company 1": 0,
+    "Microsoft": 0,
+    "Amazon": 0,
+    "Qualcomm": 0,
     "Walmart": 0,
     "Target": 0,
     "Apple": 0
@@ -15,7 +15,20 @@ function GetBalance() { return Number.parseInt(document.getElementById("balance"
 function IsAutomaticEnabled() { return document.getElementById("automatic").classList.contains("enabled"); }
 
 function IncrementDayCount() { document.getElementById("day-count").innerHTML = GetDayCount() + 1; }
-function SetBalance(value) { document.getElementById("balance").innerHTML = value; }
+function SetBalance(value) { document.getElementById("balance").innerHTML = value; UpdateNetWorth(); }
+
+function UpdateNetWorth() {
+
+    var values = 0;
+
+    for(let i = 1; i < Table.children.length; i++) {
+        let price = Table.children[i].children[0].children[1].innerHTML; // TODO: Find safer way
+        if(Number.parseInt(Table.children[i].children[0].children[2].innerHTML) > 0)
+            values += Number.parseInt(price);
+    }
+
+    document.getElementById("net-worth").innerHTML = GetBalance() + values;
+}
 
 function GetRandomRange(min, max) {
     return (Math.random() * (max - min) + min).toFixed(2);
@@ -126,6 +139,8 @@ function RegenerateTable(shouldUpdate, high = 1, low = -0.5) {
         Table.innerHTML += GetTableEntry(value, newValue, CompanyLookup[value]);
         i++;
     }
+
+    UpdateNetWorth();
 }
 
 function BindButtonCallbacks() {
