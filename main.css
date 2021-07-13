@@ -31,6 +31,8 @@ tr:nth-child(even) {
     cursor: pointer;
 
     transition-duration: 0.2s;
+    -webkit-transition-duration: 0.2s;
+    -moz-transition-duration: 0.2s;
 }
 
 .buy-stock:hover {
@@ -44,6 +46,8 @@ tr:nth-child(even) {
     cursor: pointer;
 
     transition-duration: 0.2s;
+    -webkit-transition-duration: 0.2s;
+    -moz-transition-duration: 0.2s;
 }
 
 .sell-stock:hover {
@@ -60,12 +64,34 @@ tr:nth-child(even) {
     width: 50vw;
 }
 
-#increment {
-    float: right;
-    margin: 0 2em 0 0;
-    cursor: pointer;
-    background-color: transparent;
-    border: solid 3px #34a4eb;
-    border-radius: 5px;
-    font-size: 1.2rem;
+.wrapper .section:nth-child(2) {
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: column;
+    align-items: flex-end;
 }
+
+.wrapper .section:nth-child(2) button {
+    width: 7.5em;
+    font-size: 1rem;
+    border-radius: 5px;
+    background-color: transparent;
+    transition-duration: 0.2s;
+    -webkit-transition-duration: 0.2s;
+    -moz-transition-duration: 0.2s;
+    cursor: pointer;
+    margin: 0.25em 3em 0.25em 0;
+}
+
+#increment {
+    border: solid 3px #34a4eb;
+}
+
+#automatic {
+    border: solid 3px tomato;
+    width: 10em;
+}
+
+
+#increment:hover { background-color: #34a4eb; }
+#automatic:hover, #automatic.enabled { background-color: tomato; }

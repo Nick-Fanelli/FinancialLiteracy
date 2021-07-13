@@ -9,8 +9,12 @@ var CompanyLookup = {
     "Apple": 0
 };
 
+function TimeUpdate() {}
+
 function GetDayCount() { return Number.parseInt(document.getElementById("day-count").innerHTML); }
 function GetBalance() { return Number.parseInt(document.getElementById("balance").innerHTML); }
+
+function IsAutomaticEnabled() { return document.getElementById("automatic").classList.contains("enabled"); }
 
 function IncrementDayCount() { document.getElementById("day-count").innerHTML = GetDayCount() + 1; }
 function SetBalance(value) { document.getElementById("balance").innerHTML = value; }
@@ -31,9 +35,6 @@ function BuyStock(htmlItem) {
         return;
     }
 
-    if(!confirm(`Are you sure you want to buy a stock in ${data.name}?`))
-        return;
-
     CompanyLookup[data.name]++;
     SetBalance(GetBalance() - data.price);
 
@@ -48,9 +49,6 @@ function SellStock(htmlItem) {
         return;
     }
 
-    if(!confirm(`Are you sure you want to sell a stock in ${data.name}`))
-        return;
-    
     CompanyLookup[data.name]--;
     SetBalance(GetBalance() + data.price);
 
@@ -102,10 +100,34 @@ function BindButtonCallbacks() {
         IncrementDayCount();
         GenerateTable();
     }
+
+    document.getElementById("automatic").onclick = function() {
+        document.getElementById("automatic").classList.toggle("enabled");
+        HandleUpdateLoop();
+    }
+}
+
+function loop() {
+    console.log("Update");
+}
+
+function HandleUpdateLoop() {
+    const updateLoop = setInterval((interval) => {
+        if(!IsAutomaticEnabled()) {
+            clearInterval(updateLoop);
+            return;
+        }
+
+        GenerateTable();
+    }, 2500);
+
 }
 
 window.onload = function() {
     BindButtonCallbacks();
     SetBalance(1000); // Starting Balance
     GenerateTable();
+
+    // Start Update Loop
+    HandleUpdateLoop();
 }
