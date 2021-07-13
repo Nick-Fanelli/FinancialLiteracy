@@ -38,7 +38,7 @@ function BuyStock(htmlItem) {
     CompanyLookup[data.name]++;
     SetBalance(GetBalance() - data.price);
 
-    GenerateTable();
+    RegenerateTable(false);
 }
 
 function SellStock(htmlItem) {
@@ -52,7 +52,7 @@ function SellStock(htmlItem) {
     CompanyLookup[data.name]--;
     SetBalance(GetBalance() + data.price);
 
-    GenerateTable();
+    RegenerateTable(false);
 }
 
 function GetDataFromEntry(entry) {
@@ -95,10 +95,45 @@ function GenerateTable() {
     }
 }
 
+function RegenerateTable(shouldUpdate) {
+
+    var values = [];
+
+    for(let i = 1; i < Table.children.length; i++) {
+        let price = Table.children[i].children[0].children[1]; // TODO: Find safer way
+        values.push(price.innerHTML);
+    }
+
+    Table.innerHTML = `
+    <tr id="main-header">
+        <th>Company Name</th>
+        <th>Current Selling Price</th>
+        <th>Stocks Owned</th>
+        <th>Controls</th>
+    </tr>
+    `;
+
+    let i = 0;
+
+    for(let value in CompanyLookup) {
+        let newValue = Number.parseFloat(values[i]);
+
+        if(shouldUpdate) {
+            // Generate Percent Change
+            let percentChange = GetRandomRange(-5, 8);
+            newValue += newValue * (percentChange / 100);
+            newValue = Math.round(100 * newValue) / 100; // Round to nearest cent
+        }
+
+        Table.innerHTML += GetTableEntry(value, newValue, CompanyLookup[value]);
+        i++;
+    }
+}
+
 function BindButtonCallbacks() {
     document.getElementById("increment").onclick = function() {
         IncrementDayCount();
-        GenerateTable();
+        RegenerateTable(true);
     }
 
     document.getElementById("automatic").onclick = function() {
@@ -118,7 +153,7 @@ function HandleUpdateLoop() {
             return;
         }
 
-        GenerateTable();
+        RegenerateTable(true);
     }, 2500);
 
 }
