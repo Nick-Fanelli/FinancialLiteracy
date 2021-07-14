@@ -29,8 +29,7 @@ function UpdateNetWorth() {
 
     for(let i = 1; i < Table.children.length; i++) {
         let price = Table.children[i].children[0].children[1].innerHTML; // TODO: Find safer way
-        if(Number.parseInt(Table.children[i].children[0].children[2].innerHTML) > 0)
-            values += Number.parseInt(price);
+        values += Number.parseInt(price) * Number.parseInt(Table.children[i].children[0].children[2].innerHTML);
     }
 
     document.getElementById("net-worth").innerHTML = GetBalance() + values;
